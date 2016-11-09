@@ -3,7 +3,7 @@
 老何讲的内容确实不错，希望大家多多学习。
 [Node.js进阶教程第一步(基础篇)](http://study.163.com/course/courseMain.htm?courseId=1003228034)
 
-我也购买了他的
+我也会继续学习他的
 [Node.js进阶教程第二步：Express框架]
 (http://study.163.com/course/courseMain.htm?courseId=1003274017)
 
@@ -13,4 +13,4 @@
 
 希望大家多多学习NodeJs。
 
-如有任何疑问可以Email(baoguo.ding#foxmail.com)我。
+如有任何疑问可以Email我baoguo.ding#foxmail.com。
