@@ -1,0 +1,54 @@
+//---------n8_routhtml.js------------------------
+var    http    =    require('http');
+var    url      =  require('url');
+var    router  =    require('./router');
+http.createServer(function    (request,    response)    {
+                if(request.url!=="/favicon.ico"){    //清除第2此访问
+                pathname=url.parse(request.url).pathname;
+                pathname  =  pathname.replace(/\//,'');//替换掉前面的/
+                router[pathname](request,response);
+        }
+}).listen(8000);
+console.log('Server    running    at    http://127.0.0.1:8000/');
+//----------router.js----------------------
+var  optfile  =  require('./models/optfile');
+function  getRecall(req,res){
+    res.writeHead(200,    {'Content-Type':    'text/html;    charset=utf-8'});
+    function  recall(data){
+        res.write(data);
+        res.end('');//不写则没有http协议尾
+    }
+    return  recall;
+}
+module.exports={
+        login:function(req,res){
+        /*
+                function  recall(data){
+            res.write(data);
+            res.end('');//不写则没有http协议尾
+        }*/
+        recall  =  getRecall(req,res);
+        optfile.readfile('./views/login.html',recall);
+        },
+        zhuce:function(req,res){
+        /*
+        function  recall(data){
+            res.write(data);
+            res.end('');//不写则没有http协议尾
+        }
+        */
+        recall  =  getRecall(req,res);
+                optfile.readfile('./views/zhuce.html',recall);
+        },
+    writefile:function(req,res){
+        function  recall(data){
+            res.write(data);
+            res.end('');//不写则没有http协议尾
+        }
+        optfile.writefile('./views/one.txt','今天阳光灿烂',recall);
+    },
+    showImg:function(req,res){
+        res.writeHead(200,    {'Content-Type':'image/jpeg'});
+        optfile.readImg('./imgs/pig.png',res);
+    }
+}

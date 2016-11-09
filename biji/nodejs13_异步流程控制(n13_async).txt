@@ -1,0 +1,171 @@
+先安装：
+G:\www\nodejs\study>npm install async --g
+
+1.串行无关联：async.series(tasks,callback);
+多个函数依次执行,之间没有数据交换,其中一个函数出错，后续函数不再执行
+async.series({
+    one: function(callback){
+        callback(null, 1);
+    },
+    two: function(callback){
+        callback(null, 2);
+    }
+},function(err, results) {
+    console.log(results);
+});
+例：交叉执行
+ //-------------n13_async.js------------------------------
+function oneFun()
+{
+    /*
+    setTimeout(function(){
+
+    },1000);
+    */
+    ii=0;
+    setInterval(function(){
+        console.log("aaa="+new Date());
+        ii++;
+        if(ii==3){
+            clearInterval(this);
+        }
+    },1000);
+    console.log("oneFun");
+}
+function twoFun()
+{
+    jj=0;
+    setInterval(function(){
+        console.log("bbb="+new Date());
+        jj++;
+        if(jj==3){
+            clearInterval(this);
+        }
+    },1000);
+    console.log("oneFun执行完毕");
+}
+
+oneFun(0);console.log("oneFun执行");
+twoFun();
+console.log("twoFun执行");
+console.log("主进程执行完毕");
+//-------------n13_async.js------------------------------
+var async = require('async');
+function exec(){
+    async.series({
+        one: function(done){
+            ii=0;
+            setInterval(function(){
+                console.log('aaa='+new Date());
+                ii++;
+                if(ii==3){
+                    clearInterval(this);
+                    done(null,{one:"one"});
+                }
+            },1000);
+        },
+        two: function(done){
+            jj=0;
+            setInterval(function(){
+                console.log('bbb='+new Date());
+                jj++;
+                if(jj>3){
+                    clearInterval(this);
+                    done(null,{two:"two"});
+                }
+            },1000);
+        }
+    },
+        function(err,rs) {
+            console.log(err);
+            console.log(rs);
+        });
+}
+exec();
+
+2.并行无关联：async.parallel(tasks,callback);
+多个函数并行执行，最后汇总结果,如果某一个流程出错就退出
+async.parallel({
+    one: function(callback){
+        callback(null, 1);
+    },
+    two: function(callback){
+        callback(null, 2);
+    }
+},function(err, results) {
+    console.log(results);
+});
+3.串行有关联:waterfall
+每一步执行时需要由上一步执行的结果当做参数.所以每一步必须串行等待
+async.waterfall([
+    function (done) {
+
+        done(null, 'one');
+    },
+    function (onearg, done) {
+
+        done(null, onearg + '| two');
+    },
+    function (twoarg, done) {
+
+        done(null, twoarg + '| three');
+    },
+    function (threearg, done) {
+
+        done(null, threearg + '| four');
+    }
+], function (error, result) {
+    console.log(result);
+    console.timeEnd('waterfall');
+})
+例子：
+function exec(){
+    async.waterfall(
+        [
+            function(done){
+                ii=0;
+                setInterval(function(){
+                    console.log("aaa="+new Date());
+                    ii++;
+                    if(ii==3){
+                        clearInterval(this);
+                        done(null,'one完毕');
+                    }
+                },1000);
+            },
+            function(preValue,done){
+                jj=0;
+                setInterval(function(){
+                    console.log(preValue+"="+new Date());
+                    jj++;
+                    if(jj==3){
+                        clearInterval(this);
+                        done(null,preValue+',two完毕');
+                    }
+                },1000);
+
+            }
+        ],function(err,rs){
+            console.log(err);
+            console.log(rs);
+        }
+    )
+}
+
+4.parallelLimit(tasks, limit, [callback])
+
+parallelLimit函数和parallel类似，但是它多了一个参数limit。
+limit参数限制任务只能同时并发一定数量，而不是无限制并发,
+
+async.parallelLimit([
+    function(callback){
+        callback(null, 'one');
+    },
+    function(callback){
+        callback(null, 'two');
+    }
+],
+2, //只允许同时有两个函数并行
+function(err, results){
+    console.log(results);
+});

@@ -1,0 +1,34 @@
+//-----------n5_readfile-------------------------
+var  http  =  require('http');
+var  optfile  =  require('./models/optfile');
+http.createServer(function  (request,  response)  {
+    response.writeHead(200,  {'Content-Type':  'text/html;  charset=utf-8'});
+    if(request.url!=="/favicon.ico"){  //清除第2此访问
+        console.log('访问');
+        response.write('hello,world');
+        //optfile.readfile("G:\\www\\nodejs\\one\\models\\aa.txt");
+        optfile.readfileSync("G:\\www\\nodejs\\one\\models\\aa.txt");
+        response.end('hell,世界');//不写则没有http协议尾
+    }
+}).listen(8000);
+console.log('Server  running  at  http://127.0.0.1:8000/');
+//-------------optfile.js-------------------------
+var  fs=  require('fs');
+module.exports={
+    readfile:function(path){          //异步执行
+        fs.readFile(path,  function  (err,  data)  {
+            if  (err)  {
+              console.log(err);
+            }else{
+              console.log(data.toString());
+            }
+        });
+        console.log("异步方法执行完毕");
+    },
+    readfileSync:function(path){      //同步读取
+        var  data  =  fs.readFileSync(path,'utf-8');
+        //console.log(data);
+        console.log("同步方法执行完毕");
+        return  data;
+    }
+}
